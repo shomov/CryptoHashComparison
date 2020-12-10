@@ -1,12 +1,14 @@
 # Замеры JMH / JMH measurements
 
-Реализованы замеры производительности алгоритма хэширования ГОСТ 34.11-2018 (Стрибог)
+![Java CI with Maven](https://github.com/shomov/GOST-34.11-2018_JMH/workflows/Java%20CI%20with%20Maven/badge.svg)
 
-Часть курсового проекта [ГОСТ 34.10-2018](https://https://github.com/shomov/GOST-34.10-2018)
+Реализованы замеры производительности алгоритма хэширования [ГОСТ 34.11-2018 (Стрибог)](http://protect.gost.ru/v.aspx?control=7&id=232143)
 
-Implemented and measured the performance of the hashing algorithm of GOST 34.11-2018 (Stribog)
+Часть курсового проекта [ГОСТ 34.10-2018](https://github.com/shomov/GOST-34.10-2018)
 
-Part of the course project [GOST 34.10-2018](https://https://github.com/shomov/GOST-34.10-2018)
+Implemented and measured the performance of the hashing algorithm of [GOST 34.11-2018 (Stribog)](http://protect.gost.ru/v.aspx?control=7&id=232143)
+
+Part of the course project [GOST 34.10-2018](https://github.com/shomov/GOST-34.10-2018)
 
 | Benchmark                              | Mode | Threads | Samples | Score     | Score Error (99,9%) | Unit  | Param: msgSize |
 |----------------------------------------|------|---------|---------|-----------|---------------------|-------|----------------|
