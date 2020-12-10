@@ -37,6 +37,9 @@ import stribog.Hash;
 
 import java.util.*;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 
 public class MyBenchmark {
@@ -47,27 +50,109 @@ public class MyBenchmark {
                 "9000", "10000", "11000", "12000", "13000", "14000", "15000"})
         public int msgSize;
         public ArrayList<Integer> msg = new ArrayList<>();
+        public int[] arr = new int[msgSize];
+        public byte[] dst = new byte[msgSize];
 
         @Setup(Level.Trial)
         public void setUp() {
-            for (var i = 0; i < msgSize; i++)
+            arr = new int[msgSize];
+            for (var i = 0; i < msgSize; i++) {
                 msg.add(new Random().nextInt(256));
+                arr[i] = msg.get(i);
+            }
+
+            // https://stackoverflow.com/questions/2183240/java-integer-to-byte-array
+            dst = new byte[msgSize << 2];
+            for (var i = 0; i < msgSize; i++) {
+                var x = msg.get(i);
+                var j = i << 2;
+                dst[j] = (byte) ((x) & 0xff);
+                j++;
+                dst[j] = (byte) ((x >>> 8) & 0xff);
+                dst[j] = (byte) ((x >>> 16) & 0xff);
+                dst[j] = (byte) ((x >>> 24) & 0xff);
+            }
         }
 
+
+        /**
+         * Stribog
+         */
         @Fork(value = 1, warmups = 1)
         @Warmup(iterations = 2, time = 500, timeUnit = MILLISECONDS)
         @org.openjdk.jmh.annotations.Benchmark
         @BenchmarkMode(Mode.AverageTime)
         @OutputTimeUnit(value = MILLISECONDS)
-        @Measurement(iterations = 5, time = 200, timeUnit = MILLISECONDS)
-
+        @Measurement(iterations = 10, time = 200, timeUnit = MILLISECONDS)
 
         public void StribogBench(Blackhole blackhole, BenchTest state) {
             var hash = new Hash(512);
-            var arr = new int[state.msg.size()];
-            for (var i = 0; i < arr.length; i++)
-                arr[i] = state.msg.get(i);
             blackhole.consume(hash.getHash(arr));
+        }
+
+        /**
+         * MD5_128
+         */
+        @Fork(value = 1, warmups = 1)
+        @Warmup(iterations = 2, time = 500, timeUnit = MILLISECONDS)
+        @org.openjdk.jmh.annotations.Benchmark
+        @BenchmarkMode(Mode.AverageTime)
+        @OutputTimeUnit(value = MILLISECONDS)
+        @Measurement(iterations = 10, time = 200, timeUnit = MILLISECONDS)
+
+        public void MD5Bench(Blackhole blackhole, BenchTest state) throws NoSuchAlgorithmException {
+            var msdDigest = MessageDigest.getInstance("MD5");
+            var messageDigest = msdDigest.digest(state.dst);
+            blackhole.consume(new BigInteger(1, messageDigest));
+
+        }
+
+        /**
+         * SHA-1_160
+         */
+        @Fork(value = 1, warmups = 1)
+        @Warmup(iterations = 2, time = 500, timeUnit = MILLISECONDS)
+        @org.openjdk.jmh.annotations.Benchmark
+        @BenchmarkMode(Mode.AverageTime)
+        @OutputTimeUnit(value = MILLISECONDS)
+        @Measurement(iterations = 10, time = 200, timeUnit = MILLISECONDS)
+
+        public void SHA1Bench(Blackhole blackhole, BenchTest state) throws NoSuchAlgorithmException {
+            var msdDigest = MessageDigest.getInstance("SHA-1");
+            var messageDigest = msdDigest.digest(state.dst);
+            blackhole.consume(new BigInteger(1, messageDigest));
+        }
+
+        /**
+         * SHA-2_512
+         */
+        @Fork(value = 1, warmups = 1)
+        @Warmup(iterations = 2, time = 500, timeUnit = MILLISECONDS)
+        @org.openjdk.jmh.annotations.Benchmark
+        @BenchmarkMode(Mode.AverageTime)
+        @OutputTimeUnit(value = MILLISECONDS)
+        @Measurement(iterations = 10, time = 200, timeUnit = MILLISECONDS)
+
+        public void SHA512Bench(Blackhole blackhole, BenchTest state) throws NoSuchAlgorithmException {
+            var msdDigest = MessageDigest.getInstance("SHA-512");
+            var messageDigest = msdDigest.digest(state.dst);
+            blackhole.consume(new BigInteger(1, messageDigest));
+        }
+
+        /**
+         * SHA-3_512
+         */
+        @Fork(value = 1, warmups = 1)
+        @Warmup(iterations = 2, time = 500, timeUnit = MILLISECONDS)
+        @org.openjdk.jmh.annotations.Benchmark
+        @BenchmarkMode(Mode.AverageTime)
+        @OutputTimeUnit(value = MILLISECONDS)
+        @Measurement(iterations = 10, time = 200, timeUnit = MILLISECONDS)
+
+        public void SHA3Bench(Blackhole blackhole, BenchTest state) throws NoSuchAlgorithmException {
+            var msdDigest = MessageDigest.getInstance("SHA3-512");
+            var messageDigest = msdDigest.digest(state.dst);
+            blackhole.consume(new BigInteger(1, messageDigest));
         }
     }
 }
