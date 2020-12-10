@@ -117,9 +117,9 @@ Part of the course project [GOST 34.10-2018](https://github.com/shomov/GOST-34.1
 
 ![alt-Stribog](Charms/Stribog.png "Stribog.png")
 
-В конечном итоге, Стрибог значительно проигрывает по сравнению с другими алгоритмами.
+В конечном итоге, данная реализация Стрибог значительно проигрывает по производительности другим алгоритмам.
 
-In the end, Stribog loses significantly compared to other algorithms.
+In the end, this implementation of Stribog significantly loses performance to other algorithms.
 
 ![alt-Total](Charms/Total.png "Total.png")
 
