@@ -49,29 +49,17 @@ public class MyBenchmark {
         @Param({"0", "1000", "2000", "3000", "4000", "5000", "6000", "7000", "8000",
                 "9000", "10000", "11000", "12000", "13000", "14000", "15000"})
         public int msgSize;
-        public ArrayList<Integer> msg = new ArrayList<>();
         public int[] arr = new int[msgSize];
         public byte[] dst = new byte[msgSize];
 
         @Setup(Level.Trial)
         public void setUp() {
             arr = new int[msgSize];
-            for (var i = 0; i < msgSize; i++) {
-                msg.add(new Random().nextInt(256));
-                arr[i] = msg.get(i);
-            }
+            for (var i = 0; i < msgSize; i++)
+                arr[i] = new Random().nextInt(256);
 
-            // https://stackoverflow.com/questions/2183240/java-integer-to-byte-array
-            dst = new byte[msgSize << 2];
-            for (var i = 0; i < msgSize; i++) {
-                var x = msg.get(i);
-                var j = i << 2;
-                dst[j] = (byte) ((x) & 0xff);
-                j++;
-                dst[j] = (byte) ((x >>> 8) & 0xff);
-                dst[j] = (byte) ((x >>> 16) & 0xff);
-                dst[j] = (byte) ((x >>> 24) & 0xff);
-            }
+            dst = new byte[msgSize];
+            new Random().nextBytes(dst);
         }
 
 
@@ -102,9 +90,7 @@ public class MyBenchmark {
 
         public void MD5Bench(Blackhole blackhole, BenchTest state) throws NoSuchAlgorithmException {
             var msdDigest = MessageDigest.getInstance("MD5");
-            var messageDigest = msdDigest.digest(state.dst);
-            blackhole.consume(new BigInteger(1, messageDigest));
-
+            blackhole.consume(new BigInteger(1, msdDigest.digest(state.dst)));
         }
 
         /**
@@ -119,8 +105,7 @@ public class MyBenchmark {
 
         public void SHA1Bench(Blackhole blackhole, BenchTest state) throws NoSuchAlgorithmException {
             var msdDigest = MessageDigest.getInstance("SHA-1");
-            var messageDigest = msdDigest.digest(state.dst);
-            blackhole.consume(new BigInteger(1, messageDigest));
+            blackhole.consume(new BigInteger(1, msdDigest.digest(state.dst)));
         }
 
         /**
@@ -135,8 +120,7 @@ public class MyBenchmark {
 
         public void SHA512Bench(Blackhole blackhole, BenchTest state) throws NoSuchAlgorithmException {
             var msdDigest = MessageDigest.getInstance("SHA-512");
-            var messageDigest = msdDigest.digest(state.dst);
-            blackhole.consume(new BigInteger(1, messageDigest));
+            blackhole.consume(new BigInteger(1, msdDigest.digest(state.dst)));
         }
 
         /**
@@ -151,8 +135,7 @@ public class MyBenchmark {
 
         public void SHA3Bench(Blackhole blackhole, BenchTest state) throws NoSuchAlgorithmException {
             var msdDigest = MessageDigest.getInstance("SHA3-512");
-            var messageDigest = msdDigest.digest(state.dst);
-            blackhole.consume(new BigInteger(1, messageDigest));
+            blackhole.consume(new BigInteger(1, msdDigest.digest(state.dst)));
         }
     }
 }
